@@ -1,0 +1,17 @@
+{
+  "name": "blueprinter",
+  "version": "0.0.1",
+  "description": "A configurable CLI for creating the templates for your project.",
+  "main": "index.js",
+  "scripts": {
+    "test": ""
+  },
+  "author": "Ievgen Aznaurov",
+  "license": "ISC",
+  "bin": {
+    "bpr": "./index.js"
+  },
+  "dependencies": {
+    "commander": "^2.11.0"
+  }
+}
