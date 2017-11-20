@@ -1,6 +1,6 @@
+const path = require('path');
 const { existsSync, mkdirSync, writeFileSync } = require('fs');
-const { templatesDirName, templatesDirPath, configFileName, configFilePath } = require('../constants');
-const configDefaults = require('../config-defaults');
+const { templatesDirName, configFileName } = require('../constants');
 
 const commandName = 'init';
 
@@ -16,15 +16,29 @@ module.exports = {
 };
 
 function action() {
+  const pathJoinRoot = path.join.bind(path, process.cwd());
+
+  createTemplatesDirIfNotExist(
+    pathJoinRoot(templatesDirName)
+  );
+
+  createConfigFileIfNotExist(
+    pathJoinRoot(configFileName)
+  );
+}
+
+function createTemplatesDirIfNotExist(templatesDirPath) {
   if (!existsSync(templatesDirPath)) {
     mkdirSync(templatesDirPath);
     console.log(`Directory ${templatesDirName} created`);
   } else {
     console.log(`Directory ${templatesDirName} already exists`);
   }
+}
 
+function createConfigFileIfNotExist(configFilePath) {
   if (!existsSync(configFilePath)) {
-    writeFileSync(configFilePath, configDefaults);
+    writeFileSync(configFilePath, require('../config-tpl'));
     console.log(`File ${configFileName} created`);
   } else {
     console.log(`File ${configFileName} already exists`);
