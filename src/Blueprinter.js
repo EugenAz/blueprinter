@@ -1,4 +1,5 @@
 const { version } = require('../package.json');
+const chalk = require('chalk');
 
 class Blueprinter {
   constructor(program) {
@@ -13,7 +14,7 @@ class Blueprinter {
     this.program
       .action(cmd => {
         if (!this.validCommandNames.includes(cmd)) {
-          console.error(`Error: Unknown command "${cmd}"`);
+          console.error(chalk.red(`Error: Unknown command `) + chalk.bold.red(`"${cmd}"`));
           process.exit(1);
         }
       });

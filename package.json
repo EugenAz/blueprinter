@@ -12,6 +12,7 @@
     "bpr": "./index.js"
   },
   "dependencies": {
+    "chalk": "^2.3.0",
     "commander": "^2.11.0",
     "rimraf": "^2.6.2"
   },

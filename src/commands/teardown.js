@@ -2,6 +2,7 @@ const { existsSync } = require('fs');
 const rimraf = require('rimraf');
 const findUp = require('../utils/find-up');
 const { templatesDirName, configFileName } = require('../constants');
+const chalk = require('chalk');
 
 const commandName = 'teardown';
 
@@ -16,36 +17,50 @@ module.exports = {
 };
 
 function action() {
-  removeTemplatesDirIfExists();
-  removeConfigFileIfExists();
+  Promise.all([
+           removeTemplatesDirIfExists(),
+           removeConfigFileIfExists()
+         ])
+         .then(() => {
+           console.log(chalk.green('Blueprinter teardown complete.'));
+         })
+         .catch(e => {
+           console.error(chalk.red(e));
+           process.exit(1);
+         });
 
-  console.log('Blueprinter teardown complete.');
 }
 
 function removeTemplatesDirIfExists() {
-  const templatesDirPath = findUp(templatesDirName);
+  return new Promise((resolve, reject) => {
+    const templatesDirPath = findUp(templatesDirName);
 
-  if (templatesDirPath && existsSync(templatesDirPath)) {
-    rimraf(templatesDirPath, e => {
-      if (e) {
-        console.error(e);
-      } else {
-        console.log(`Directory ${templatesDirName} deleted`);
-      }
-    });
-  }
+    if (templatesDirPath && existsSync(templatesDirPath)) {
+      rimraf(templatesDirPath, e => {
+        if (e) {
+          reject(e);
+        } else {
+          console.log(chalk.green(`Directory ${templatesDirName} deleted`));
+          resolve();
+        }
+      });
+    }
+  });
 }
 
 function removeConfigFileIfExists() {
-  const configFilePath = findUp(configFileName);
+  return new Promise((resolve, reject) => {
+    const configFilePath = findUp(configFileName);
 
-  if (existsSync(configFilePath)) {
-    rimraf(configFilePath, e => {
-      if (e) {
-        console.error(e);
-      } else {
-        console.log(`File ${configFileName} deleted`);
-      }
-    });
-  }
+    if (existsSync(configFilePath)) {
+      rimraf(configFilePath, e => {
+        if (e) {
+          reject(e);
+        } else {
+          console.log(chalk.green(`File ${configFileName} deleted`));
+          resolve();
+        }
+      });
+    }
+  });
 }
