@@ -31,7 +31,7 @@ describe('`bpr init`', () => {
 
       writeFileSync(configPath, configFileContent);
 
-      expect(existsSync(configPath)).toBe(true);
+      expect(configPath).toBeAnExistingFileOrDirectory();
 
       execSync('bpr init');
 
