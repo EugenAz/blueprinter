@@ -4,17 +4,12 @@
   "description": "A configurable CLI for creating the templates for your project.",
   "main": "index.js",
   "scripts": {
-    "test": ""
+    "test": "node tests/runner"
   },
   "author": "Ievgen Aznaurov",
   "license": "ISC",
   "bin": {
     "bpr": "./index.js"
-  },
-  "dependencies": {
-    "chalk": "^2.3.0",
-    "commander": "^2.11.0",
-    "rimraf": "^2.6.2"
   },
   "repository": {
     "type": "git",
@@ -23,5 +18,13 @@
   "engines": {
     "node": ">=6.9.0",
     "npm": ">=3.0.0"
+  },
+  "dependencies": {
+    "chalk": "^2.3.0",
+    "commander": "^2.11.0",
+    "rimraf": "^2.6.2"
+  },
+  "devDependencies": {
+    "jasmine": "^2.8.0"
   }
 }

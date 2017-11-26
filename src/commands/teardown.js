@@ -28,7 +28,6 @@ function action() {
            console.error(chalk.red(e));
            process.exit(1);
          });
-
 }
 
 function removeTemplatesDirIfExists() {
