@@ -35,7 +35,7 @@ describe('`bpr init`', () => {
 
       execSync('bpr init');
 
-      expect(readFileSync(configPath).toString('utf8')).toBe(configFileContent);
+      expect(readFileSync(configPath, 'utf-8')).toBe(configFileContent);
     });
   });
 

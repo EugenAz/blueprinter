@@ -133,7 +133,7 @@ function getTemplate(tplName) {
   if (tplDirPath) {
     const tplPath = path.join(tplDirPath, tplName);
     if (existsSync(tplPath)) {
-      return readFileSync(tplPath);
+      return readFileSync(tplPath, 'utf-8');
     } else {
       console.error(chalk.red(`Template "${tplName}" could not be found in ${templatesDirName}`));
       process.exit(1);
@@ -148,10 +148,6 @@ function getTemplate(tplName) {
 function parseFileContent(fileContent, name) {
   const nameCamelCase = toCamelCase(name);
   const nameCapitalCamelCase = capitalize(nameCamelCase);
-
-  if (typeof fileContent === 'object') {
-    fileContent = fileContent.toString('utf8');
-  }
 
   fileContent = fileContent.replace(/\$NAME_CAPITAL_CAMEL_CASE/g, nameCapitalCamelCase);
   fileContent = fileContent.replace(/\$NAME_CAMEL_CASE/g, nameCamelCase);
