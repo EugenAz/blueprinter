@@ -4,7 +4,7 @@
   "description": "A configurable CLI for creating the templates for your project.",
   "main": "index.js",
   "scripts": {
-    "test": "node tests/runner"
+    "test": "NODE_ENV=test node tests/runner"
   },
   "author": "Ievgen Aznaurov",
   "license": "ISC",

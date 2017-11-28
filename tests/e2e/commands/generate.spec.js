@@ -2,11 +2,17 @@ const { execSync } = require('child_process');
 
 describe('`bpr generate`', () => {
 
-  xit('should exit if config file does not exist', () => {
-    execSync('bpr generate component abc');
+  it('should exit if config file does not exist', () => {
+    expect(() => execSync('bpr generate component abc')).toThrow();
+
+    try {
+      execSync('bpr generate component abc');
+    } catch(e) {
+      expect(e.status).toBe(1);
+    }
   });
   
-  xit('should generate files by config using name', () => {
+  it('should generate files by config using name', () => {
     execSync('bpr generate component abc');
   });
   
@@ -26,6 +32,7 @@ describe('`bpr generate`', () => {
     execSync('bpr g c abc');
   });
 
-  describe('while validating the config file', () => {
-  });
+  xdescribe('test the root configuration', () => {});
+  xdescribe('dynamically replace special keywords in templates with values', () => {});
+  xdescribe('while validating the config file', () => {});
 });
