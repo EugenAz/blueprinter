@@ -4,6 +4,7 @@ const chalk = require('chalk');
 const findUp = require('../utils/find-up');
 const { configFileName, templatesDirName } = require('../constants');
 const { toCamelCase, capitalize } = require('../utils/string');
+const logger = require('../utils/logger');
 
 const commandName = 'generate';
 const alias = 'g';
@@ -40,7 +41,7 @@ function getUserConfigOrExit() {
   const userConfPath = findUp(configFileName);
 
   if (!userConfPath) {
-    console.error(chalk.red(
+    logger.error(chalk.red(
       `${configFileName} could not be found. \n\nYou either haven't initialized blueprinter (do it with 'bpr init')\nor running bpr command outside of your project.`));
     process.exit(1);
   }
@@ -53,7 +54,7 @@ function findEntityConfigOrExit(entityName, config) {
     e.name === entityName || e.aliases.includes(entityName));
 
   if (!entityConfig) {
-    console.error(
+    logger.error(
       chalk.red(`Entity "${entityName}" is not found in your ${configFileName}. Please make sure that it's there.`));
     process.exit(1);
   }
@@ -75,7 +76,7 @@ function buildEntityBasePath(srcRoot) {
     return presumableSrcPath;
   }
 
-  console.error(
+  logger.error(
     chalk.red(`Blueprinter root directory ("${srcRoot}") specified in your ${configFileName} could not be found.`));
   process.exit(1);
 }
@@ -135,11 +136,11 @@ function getTemplate(tplName) {
     if (existsSync(tplPath)) {
       return readFileSync(tplPath, 'utf-8');
     } else {
-      console.error(chalk.red(`Template "${tplName}" could not be found in ${templatesDirName}`));
+      logger.error(chalk.red(`Template "${tplName}" could not be found in ${templatesDirName}`));
       process.exit(1);
     }
   } else {
-    console.error(chalk.red(
+    logger.error(chalk.red(
       `${templatesDirName} could not be found. \n\nYou either haven't initialized blueprinter (do it with 'bpr init')\nor running bpr command outside of your project.`));
     process.exit(1);
   }
@@ -157,9 +158,9 @@ function parseFileContent(fileContent, name) {
 }
 
 function help() {
-  console.log('\n  Examples:');
-  console.log();
-  console.log('    $ bpr generate component abc');
-  console.log('    $ bpr g component path/to/abc');
-  console.log();
+  logger.log('\n  Examples:');
+  logger.log();
+  logger.log('    $ bpr generate component abc');
+  logger.log('    $ bpr g component path/to/abc');
+  logger.log();
 }

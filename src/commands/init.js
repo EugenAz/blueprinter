@@ -2,6 +2,7 @@ const path = require('path');
 const { existsSync, mkdirSync, writeFileSync } = require('fs');
 const { templatesDirName, configFileName } = require('../constants');
 const chalk = require('chalk');
+const logger = require('../utils/logger');
 
 const commandName = 'init';
 
@@ -31,17 +32,17 @@ function action() {
 function createTemplatesDirIfNotExist(templatesDirPath) {
   if (!existsSync(templatesDirPath)) {
     mkdirSync(templatesDirPath);
-    console.log(chalk.green(`Directory ${templatesDirName} created`));
+    logger.log(chalk.green(`Directory ${templatesDirName} created`));
   } else {
-    console.log(chalk.blue(`Directory ${templatesDirName} already exists`));
+    logger.log(chalk.blue(`Directory ${templatesDirName} already exists`));
   }
 }
 
 function createConfigFileIfNotExist(configFilePath) {
   if (!existsSync(configFilePath)) {
     writeFileSync(configFilePath, require('../config-tpl'));
-    console.log(chalk.green(`File ${configFileName} created`));
+    logger.log(chalk.green(`File ${configFileName} created`));
   } else {
-    console.log(chalk.blue(`File ${configFileName} already exists`));
+    logger.log(chalk.blue(`File ${configFileName} already exists`));
   }
 }

@@ -3,6 +3,7 @@ const rimraf = require('rimraf');
 const findUp = require('../utils/find-up');
 const { templatesDirName, configFileName } = require('../constants');
 const chalk = require('chalk');
+const logger = require('../utils/logger');
 
 const commandName = 'teardown';
 
@@ -22,10 +23,10 @@ function action() {
            removeConfigFileIfExists()
          ])
          .then(() => {
-           console.log(chalk.green('Blueprinter teardown complete.'));
+           logger.log(chalk.green('Blueprinter teardown complete.'));
          })
          .catch(e => {
-           console.error(chalk.red(e));
+           logger.error(chalk.red(e));
            process.exit(1);
          });
 }
@@ -39,7 +40,7 @@ function removeTemplatesDirIfExists() {
         if (e) {
           reject(e);
         } else {
-          console.log(chalk.green(`Directory ${templatesDirName} deleted`));
+          logger.log(chalk.green(`Directory ${templatesDirName} deleted`));
           resolve();
         }
       });
@@ -56,7 +57,7 @@ function removeConfigFileIfExists() {
         if (e) {
           reject(e);
         } else {
-          console.log(chalk.green(`File ${configFileName} deleted`));
+          logger.log(chalk.green(`File ${configFileName} deleted`));
           resolve();
         }
       });
