@@ -50,8 +50,8 @@ function getUserConfigOrExit() {
 }
 
 function findEntityConfigOrExit(entityName, config) {
-  const entityConfig = config.entities.find(e =>
-    e.name === entityName || e.aliases.includes(entityName));
+  const entityConfig = config.entities.find(
+    e => e.name === entityName || e.aliases.includes(entityName));
 
   if (!entityConfig) {
     logger.error(
@@ -121,8 +121,8 @@ function createFiles(filesConfig, name, entityPath) {
       const fileContent = file.tpl
         ? file.tpl
         : file.tplName
-          ? getTemplate(file.tplName)
-          : '';
+                            ? getTemplate(file.tplName)
+                            : '';
 
       writeFileSync(filePath, parseFileContent(fileContent, name));
     }

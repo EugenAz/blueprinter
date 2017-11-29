@@ -2,15 +2,56 @@ module.exports = () => ({
   root: 'src',
   entities: [
     {
-      name: 'component',
-      aliases: ['c'],
-      newDir: true,
+      name: 'some1',
+      aliases: ['s1'],
       files: [
         {
-          name: entityName => `${entityName}.component.js`,
-          tplName: 'component.js.tpl'
+          name: entityName => `${entityName}.file`,
+          tplName: 'tpl1'
         },
       ]
     },
+    {
+      name: 'some11',
+      aliases: ['s11'],
+      newDir: true,
+      files: [
+        {
+          name: entityName => `${entityName}.file`,
+          tplName: 'tpl1'
+        },
+      ]
+    },
+    {
+      name: 'some2',
+      aliases: ['s2'],
+      files: [
+        {
+          name: entityName => `${entityName}.tpl2.file`,
+          tplName: 'tpl2'
+        },
+        {
+          name: entityName => `${entityName}.tpl3.file`,
+          tplName: 'tpl3'
+        },
+        {
+          name: entityName => `${entityName}.tpl4.file`,
+          tplName: 'tpl4'
+        },
+      ]
+    },
+    {
+      name: 'some3',
+      aliases: ['s3'],
+      files: [
+        {
+          name: entityName => `${entityName}.file1`,
+          tpl: '<h1>First template generate using "tpl" config property</h1>'
+        },
+        {
+          name: entityName => `${entityName}.file2`,
+        }
+      ]
+    }
   ]
 });
