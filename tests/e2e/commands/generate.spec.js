@@ -2,9 +2,9 @@ const { execSync } = require('child_process');
 const { resolve, join } = require('path');
 const { existsSync, readFileSync } = require('fs');
 
-const { copy } = require('../../utils');
+const { copy, generateConfigFile } = require('../../utils');
 const { tmpDirPath } = require('../../setup');
-const { templatesDirName, configFileName } = require('../../../src/constants');
+const { templatesDirName } = require('../../../src/constants');
 
 describe('`bpr generate`', () => {
   const configRoot = 'src';
@@ -25,11 +25,9 @@ describe('`bpr generate`', () => {
     beforeEach(done => {
       const testsDir = resolve(tmpDirPath, '..');
 
-      Promise.all([
-               copy(join(testsDir, 'fixtures', configFileName), join(tmpDirPath, configFileName)),
-               copy(join(testsDir, 'fixtures', templatesDirName), join(tmpDirPath, templatesDirName))
-             ])
-             .then(done);
+      generateConfigFile();
+      copy(join(testsDir, 'fixtures', templatesDirName), join(tmpDirPath, templatesDirName))
+        .then(done);
     });
 
     it('should exit if requested entity is not registered in the config file', () => {
