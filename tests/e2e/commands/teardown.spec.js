@@ -29,6 +29,8 @@ describe('`bpr teardown`', () => {
       process.chdir(newCwd);
     });
 
+    afterEach(() => process.chdir(tmpDirPath));
+
     it('should have a directory deeper than a root as a current working directory', () => {
       expect(process.cwd()).not.toBe(tmpDirPath);
       expect(process.cwd()).toBe(newCwd);
