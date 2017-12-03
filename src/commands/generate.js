@@ -1,6 +1,6 @@
 const { existsSync, mkdirSync, writeFileSync, readFileSync } = require('fs');
 const path = require('path');
-const chalk = require('chalk');
+const { red } = require('chalk');
 const findUp = require('../utils/find-up');
 const { configFileName, templatesDirName } = require('../constants');
 const { toCamelCase, capitalize } = require('../utils/string');
@@ -24,7 +24,7 @@ module.exports = {
 function action(entityName, pathOrName) {
   const userConfig = getUserConfigOrExit();
   const entityConfig = findEntityConfigOrExit(entityName, userConfig);
-  const entityBasePath = buildEntityBasePath(userConfig.root);
+  const root = cleanFromPathSeparatorsAtTheStartAndEnd(userConfig.root);
   let [name, newPath] = separateNameFromPath(pathOrName);
 
   // TODO validate user config
@@ -33,15 +33,16 @@ function action(entityName, pathOrName) {
     newPath += path.sep + name;
   }
 
-  createNeededDirectories(entityBasePath, newPath);
-  createFiles(entityConfig.files, name, path.resolve(entityBasePath, newPath));
+  createNeededDirectories(root, newPath);
+  const entityPath = path.resolve(process.cwd(), root, newPath);
+  createFiles(entityConfig.files, name, entityPath);
 }
 
 function getUserConfigOrExit() {
   const userConfPath = findUp(configFileName);
 
   if (!userConfPath) {
-    logger.error(chalk.red(
+    logger.error(red(
       `${configFileName} could not be found. \n\nYou either haven't initialized blueprinter (do it with 'bpr init')\nor running bpr command outside of your project.`));
     process.exit(1);
   }
@@ -55,34 +56,23 @@ function findEntityConfigOrExit(entityName, config) {
 
   if (!entityConfig) {
     logger.error(
-      chalk.red(`Entity "${entityName}" is not found in your ${configFileName}. Please make sure that it's there.`));
+      red(`Entity "${entityName}" is not found in your ${configFileName}. Please make sure that it's there.`));
     process.exit(1);
   }
 
   return entityConfig;
 }
 
-function buildEntityBasePath(srcRoot) {
-  const cwd = process.cwd();
-
-  srcRoot = cleanFromPathSeparators(srcRoot);
-
-  if (currentWorkingDirectoryContainsSrcRootPath(cwd, srcRoot)) {
-    return cwd;
+function cleanFromPathSeparatorsAtTheStartAndEnd(p) {
+  if (p.startsWith(path.sep)) {
+    p = p.slice(1);
   }
 
-  const presumableSrcPath = path.join(cwd, srcRoot);
-  if (existsSync(presumableSrcPath)) {
-    return presumableSrcPath;
+  if (p.endsWith(path.sep)) {
+    p = p.slice(0, -1);
   }
 
-  logger.error(
-    chalk.red(`Blueprinter root directory ("${srcRoot}") specified in your ${configFileName} could not be found.`));
-  process.exit(1);
-}
-
-function cleanFromPathSeparators(p) {
-  return p.replace(new RegExp(`\\${path.sep}`, 'g'), '');
+  return p;
 }
 
 function currentWorkingDirectoryContainsSrcRootPath(cwd, srcRoot) {
@@ -99,17 +89,19 @@ function separateNameFromPath(pathOrName) {
   return [name, newPath];
 }
 
-function createNeededDirectories(entityBasePath, newPath) {
+function createNeededDirectories(rootPath, newPath) {
   const sep = path.sep;
 
-  newPath.split(sep).reduce((parentDir, childDir) => {
-    const curDir = path.resolve(parentDir, childDir);
-    if (!existsSync(curDir)) {
-      mkdirSync(curDir);
-    }
+  path.join(rootPath, newPath)
+      .split(sep)
+      .reduce((parentDir, childDir) => {
+        const curDir = path.resolve(parentDir, childDir);
+        if (!existsSync(curDir)) {
+          mkdirSync(curDir);
+        }
 
-    return curDir;
-  }, entityBasePath);
+        return curDir;
+      }, process.cwd());
 }
 
 function createFiles(filesConfig, name, entityPath) {
@@ -136,11 +128,11 @@ function getTemplate(tplName) {
     if (existsSync(tplPath)) {
       return readFileSync(tplPath, 'utf-8');
     } else {
-      logger.error(chalk.red(`Template "${tplName}" could not be found in ${templatesDirName}`));
+      logger.error(red(`Template "${tplName}" could not be found in ${templatesDirName}`));
       process.exit(1);
     }
   } else {
-    logger.error(chalk.red(
+    logger.error(red(
       `${templatesDirName} could not be found. \n\nYou either haven't initialized blueprinter (do it with 'bpr init')\nor running bpr command outside of your project.`));
     process.exit(1);
   }

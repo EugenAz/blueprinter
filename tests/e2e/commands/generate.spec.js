@@ -87,9 +87,20 @@ describe('`bpr generate`', () => {
 
       expect(existsSync(join(tmpDirPath, configRoot, 'componentA.file'))).toBe(true);
     });
+
+    describe('test the root configuration', () => {
+      it('should take root configuration value as a root directory', () => {
+        const root = join('deep', 'root', 'dir');
+
+        generateConfigFile(root);
+
+        execSync('bpr generate some1 abc');
+
+        expect(existsSync(join(tmpDirPath, root, 'abc.file'))).toBe(true);
+      });
+    });
   });
 
-  //xdescribe('test the root configuration', () => {});
-  //xdescribe('dynamically replace special keywords in templates with values', () => {});
+  //describe('dynamically replace special keywords in templates with values', () => {});
   //xdescribe('while validating the config file', () => {});
 });
