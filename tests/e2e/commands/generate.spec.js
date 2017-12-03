@@ -88,19 +88,53 @@ describe('`bpr generate`', () => {
       expect(existsSync(join(tmpDirPath, configRoot, 'componentA.file'))).toBe(true);
     });
 
-    describe('test the root configuration', () => {
-      it('should take root configuration value as a root directory', () => {
-        const root = join('deep', 'root', 'dir');
+    it('should take root configuration value as a root directory', () => {
+      const root = join('deep', 'root', 'dir');
 
-        generateConfigFile(root);
+      generateConfigFile(root);
 
-        execSync('bpr generate some1 abc');
+      execSync('bpr generate some1 abc');
 
-        expect(existsSync(join(tmpDirPath, root, 'abc.file'))).toBe(true);
-      });
+      expect(existsSync(join(tmpDirPath, root, 'abc.file'))).toBe(true);
     });
+
+    describe('replacing special keywords', () => {
+      const name = 'kebab-case-name';
+
+      beforeEach(() => execSync(`bpr generate some2 ${name}`));
+
+      const keywordsOptions = [
+        {
+          specTitle: 'should replace $NAME in tpl with actual name from command',
+          tplName: 'tpl2',
+          specialNameKeyword: '$NAME',
+          transformedNameValue: 'kebab-case-name'
+        }, {
+          specTitle: 'should replace $NAME_CAMEL_CASE in tpl with actual camel cased name from command',
+          tplName: 'tpl3',
+          specialNameKeyword: '$NAME_CAMEL_CASE',
+          transformedNameValue: 'kebabCaseName'
+        }, {
+          specTitle: 'should replace $NAME_CAPITAL_CAMEL_CASE in tpl with actual camel capitalized cased name from command',
+          tplName: 'tpl4',
+          specialNameKeyword: '$NAME_CAPITAL_CAMEL_CASE',
+          transformedNameValue: 'KebabCaseName'
+        }
+      ];
+
+      keywordsOptions.forEach(keywordsOption => it(keywordsOption.specTitle, () => {
+        const contentOfTpl = readFileSync(join(tmpDirPath, templatesDirName, keywordsOption.tplName), 'utf-8');
+
+        expect(contentOfTpl).toBe(`<h1>Entity name: ${keywordsOption.specialNameKeyword}</h1>`);
+
+        const contentOfFile = readFileSync(join(tmpDirPath, configRoot, `${name}.${keywordsOption.tplName}.file`),
+          'utf-8');
+
+        expect(contentOfFile).toBe(`<h1>Entity name: ${keywordsOption.transformedNameValue}</h1>`);
+      }));
+    });
+
   });
 
-  //describe('dynamically replace special keywords in templates with values', () => {});
   //xdescribe('while validating the config file', () => {});
 });
