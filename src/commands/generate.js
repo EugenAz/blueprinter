@@ -1,9 +1,9 @@
 const { existsSync, mkdirSync, writeFileSync, readFileSync } = require('fs');
-const path = require('path');
+const { sep, join, resolve } = require('path');
 const { red } = require('chalk');
-const findUp = require('../utils/find-up');
+const { findUp, createDirsRecursively } = require('../utils/files');
 const { configFileName, templatesDirName } = require('../constants');
-const { toCamelCase, capitalize } = require('../utils/string');
+const { toCamelCase, capitalize, cleanPathFromSeparators } = require('../utils/string');
 const logger = require('../utils/logger');
 
 const commandName = 'generate';
@@ -24,17 +24,17 @@ module.exports = {
 function action(entityName, pathOrName) {
   const userConfig = getUserConfigOrExit();
   const entityConfig = findEntityConfigOrExit(entityName, userConfig);
-  const root = cleanFromPathSeparatorsAtTheStartAndEnd(userConfig.root);
+  const root = cleanPathFromSeparators(userConfig.root);
   let [name, newPath] = separateNameFromPath(pathOrName);
 
   // TODO validate user config
 
   if (entityConfig.newDir) {
-    newPath += path.sep + name;
+    newPath += sep + name;
   }
 
   createNeededDirectories(root, newPath);
-  const entityPath = path.resolve(process.cwd(), root, newPath);
+  const entityPath = resolve(process.cwd(), root, newPath);
   createFiles(entityConfig.files, name, entityPath);
 }
 
@@ -63,51 +63,31 @@ function findEntityConfigOrExit(entityName, config) {
   return entityConfig;
 }
 
-function cleanFromPathSeparatorsAtTheStartAndEnd(p) {
-  if (p.startsWith(path.sep)) {
-    p = p.slice(1);
-  }
-
-  if (p.endsWith(path.sep)) {
-    p = p.slice(0, -1);
-  }
-
-  return p;
-}
-
 function currentWorkingDirectoryContainsSrcRootPath(cwd, srcRoot) {
-  return cwd.includes(`${path.sep}${srcRoot}${path.sep}`) ||
-         cwd.endsWith(`${path.sep}${srcRoot}`);
+  return cwd.includes(`${sep}${srcRoot}${sep}`) ||
+         cwd.endsWith(`${sep}${srcRoot}`);
 }
 
 function separateNameFromPath(pathOrName) {
   pathOrName = pathOrName.replace(/\.+\//g, '');
   let name = pathOrName.split('/');
-  let newPath = name.slice(0, -1).join(path.sep);
+  let newPath = name.slice(0, -1).join(sep);
   name = name[name.length - 1];
 
   return [name, newPath];
 }
 
 function createNeededDirectories(rootPath, newPath) {
-  const sep = path.sep;
+  const startFrom = process.cwd();
+  const path = join(rootPath, newPath);
 
-  path.join(rootPath, newPath)
-      .split(sep)
-      .reduce((parentDir, childDir) => {
-        const curDir = path.resolve(parentDir, childDir);
-        if (!existsSync(curDir)) {
-          mkdirSync(curDir);
-        }
-
-        return curDir;
-      }, process.cwd());
+  createDirsRecursively(startFrom, path);
 }
 
 function createFiles(filesConfig, name, entityPath) {
   filesConfig.forEach(file => {
     const fileName = file.name(name);
-    const filePath = path.join(entityPath, fileName);
+    const filePath = join(entityPath, fileName);
 
     if (!existsSync(filePath)) {
       const fileContent = file.tpl
@@ -124,7 +104,7 @@ function createFiles(filesConfig, name, entityPath) {
 function getTemplate(tplName) {
   const tplDirPath = findUp(templatesDirName);
   if (tplDirPath) {
-    const tplPath = path.join(tplDirPath, tplName);
+    const tplPath = join(tplDirPath, tplName);
     if (existsSync(tplPath)) {
       return readFileSync(tplPath, 'utf-8');
     } else {

@@ -1,6 +1,6 @@
 const { existsSync } = require('fs');
 const rimraf = require('rimraf');
-const findUp = require('../utils/find-up');
+const { findUp } = require('../utils/files');
 const { templatesDirName, configFileName } = require('../constants');
 const chalk = require('chalk');
 const logger = require('../utils/logger');
