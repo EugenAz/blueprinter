@@ -4,6 +4,7 @@ const { configFileName } = require('../../constants');
 const { cleanPathFromSeparators } = require('../../utils/string');
 const logger = require('../../utils/logger');
 const EntityConfig = require('./EntityConfig');
+const UserConfigValidator = require('./UserConfigValidator');
 
 let userConfigInstance;
 
@@ -32,14 +33,12 @@ module.exports = class UserConfig {
   }
 
   init() {
-    this.getUserSettingsOrExit();
-    this.validateUserSettingsFile();
+    this.userSettigns = this.getUserSettingsOrExit();
 
-    this.setEntityConfigOrExit();
+    this.validateUserConfig();
+
+    this.entityConfig = this.getEntityConfigOrExit();
     this.root = cleanPathFromSeparators(this.userSettigns.root);
-
-    // TODO validate user config
-    // validate that all tpl files exist
   }
 
   getUserSettingsOrExit() {
@@ -51,14 +50,15 @@ module.exports = class UserConfig {
       process.exit(1);
     }
 
-    this.userSettigns = require(userConfPath)();
+    return  require(userConfPath)();
   }
 
-  validateUserSettingsFile() {
-    // Validator class
+  validateUserConfig() {
+    const userConfigValidator = new UserConfigValidator(this.userSettigns, this.entityName);
+    userConfigValidator.validate();
   }
 
-  setEntityConfigOrExit() {
+  getEntityConfigOrExit() {
     const entityConfig = this.userSettigns.entities.find(
       e => e.name === this.entityName || e.aliases.includes(this.entityName));
 
@@ -68,7 +68,7 @@ module.exports = class UserConfig {
       process.exit(1);
     }
 
-    this.entityConfig = new EntityConfig(entityConfig);
+    return new EntityConfig(entityConfig);
   }
 
 };
