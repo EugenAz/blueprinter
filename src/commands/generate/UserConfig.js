@@ -62,12 +62,6 @@ module.exports = class UserConfig {
     const entityConfig = this.userSettigns.entities.find(
       e => e.name === this.entityName || e.aliases.includes(this.entityName));
 
-    if (!entityConfig) {
-      logger.error(
-        red(`Entity "${this.entityName}" is not found in your ${configFileName}. Please make sure that it's there.`));
-      process.exit(1);
-    }
-
     return new EntityConfig(entityConfig);
   }
 
