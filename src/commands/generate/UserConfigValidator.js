@@ -1,6 +1,8 @@
 const { red } = require('chalk');
+const { existsSync } = require('fs');
 const logger = require('../../utils/logger');
-const { configFileName } = require('../../constants');
+const { join } = require('path');
+const { configFileName, templatesDirName, tplDirPath } = require('../../constants');
 
 module.exports = class UserConfigValidator {
 
@@ -10,6 +12,7 @@ module.exports = class UserConfigValidator {
   }
 
   validate() {
+    this.tplDirPathShouldExist();
     this.entitiesValueIsANonEmptyArray();
     this.rootIsAString();
     this.entityIsRegistered();
@@ -22,6 +25,14 @@ module.exports = class UserConfigValidator {
     this.fileNameIsAFunctionWhichReturnsAString();
     this.tplIsAString();
     this.tplNameIsAString();
+  }
+
+  tplDirPathShouldExist() {
+    if (!tplDirPath) {
+      logger.error(red(
+        `${templatesDirName} could not be found. \n\nYou either haven't initialized blueprinter (do it with 'bpr init')\nor running bpr command outside of your project.`));
+      process.exit(1);
+    }
   }
 
   entitiesValueIsANonEmptyArray() {
@@ -58,12 +69,10 @@ module.exports = class UserConfigValidator {
                                        .map(e => e.files.filter(f => f.tplName))
                                        .reduce((acc, next) => acc.concat(next))
                                        .map(f => f.tplName)
-                                       .filter(name => {
-                                          // TODO
-                                       });
+                                       .filter(tplName => !existsSync(join(tplDirPath, tplName)));
 
     if (tplFilesWhichNotExist.length) {
-      this.validationError(`The files for the registered templates ${tplFilesWhichNotExist.join(', ')} could not be found.`);
+      this.validationError(`Templates ${tplFilesWhichNotExist.join(', ')} could not be found in ${templatesDirName} directory.`);
     }
   }
 

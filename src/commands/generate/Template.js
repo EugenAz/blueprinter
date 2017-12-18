@@ -1,10 +1,7 @@
 const { join } = require('path');
-const { existsSync, writeFileSync, readFileSync } = require('fs');
-const { red } = require('chalk');
-const { findUp } = require('../../utils/files');
-const { templatesDirName } = require('../../constants');
+const { tplDirPath } = require('../../constants');
+const { readFileSync, writeFileSync } = require('fs');
 const { toCamelCase, capitalize } = require('../../utils/string');
-const logger = require('../../utils/logger');
 
 module.exports = class Template {
 
@@ -33,20 +30,9 @@ module.exports = class Template {
   }
 
   getTemplate(tplName) {
-    const tplDirPath = findUp(templatesDirName);
-    if (tplDirPath) {
-      const tplPath = join(tplDirPath, tplName);
-      if (existsSync(tplPath)) {
-        return readFileSync(tplPath, 'utf-8');
-      } else {
-        logger.error(red(`Template "${tplName}" could not be found in ${templatesDirName}`));
-        process.exit(1);
-      }
-    } else {
-      logger.error(red(
-        `${templatesDirName} could not be found. \n\nYou either haven't initialized blueprinter (do it with 'bpr init')\nor running bpr command outside of your project.`));
-      process.exit(1);
-    }
+    const tplPath = join(tplDirPath, tplName);
+
+    return readFileSync(tplPath, 'utf-8');
   }
 
   parseFileContent() {

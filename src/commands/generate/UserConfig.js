@@ -1,6 +1,5 @@
 const { red } = require('chalk');
-const { findUp } = require('../../utils/files');
-const { configFileName } = require('../../constants');
+const { configFileName, userConfPath } = require('../../constants');
 const { cleanPathFromSeparators } = require('../../utils/string');
 const logger = require('../../utils/logger');
 const EntityConfig = require('./EntityConfig');
@@ -42,15 +41,13 @@ module.exports = class UserConfig {
   }
 
   getUserSettingsOrExit() {
-    const userConfPath = findUp(configFileName);
-
     if (!userConfPath) {
       logger.error(red(
         `${configFileName} could not be found. \n\nYou either haven't initialized blueprinter (do it with 'bpr init')\nor running bpr command outside of your project.`));
       process.exit(1);
     }
 
-    return  require(userConfPath)();
+    return require(userConfPath)();
   }
 
   validateUserConfig() {
