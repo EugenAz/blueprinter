@@ -1,10 +1,13 @@
 const { sep } = require('path');
 const UserConfig = require('./UserConfig');
+const logger = require('../../utils/logger');
+const { red } = require('chalk');
 
 module.exports = class GeneratorConfig {
 
   constructor(entityName, pathOrName) {
     this.entityName = entityName;
+    this.validateUserData(entityName, pathOrName);
 
     this.init(pathOrName);
   }
@@ -44,6 +47,23 @@ module.exports = class GeneratorConfig {
     this.path = entityConfig.shouldCreateNewDir()
       ? path + sep + this.name
       : path;
+  }
+
+  validateUserData(entityName, pathOrName) {
+    let msg = '';
+
+    if (!entityName) {
+      msg = 'Entity name is not specified.\n';
+    }
+
+    if (!pathOrName) {
+      msg += 'Path or name is not specified.';
+    }
+
+    if (msg.length) {
+      logger.error(red(msg));
+      process.exit(1);
+    }
   }
 
 };
