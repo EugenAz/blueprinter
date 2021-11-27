@@ -1,7 +1,7 @@
 {
-  "name": "blueprinter",
-  "version": "0.0.1",
-  "description": "A configurable CLI for creating the templates for your project.",
+  "name": "@eugenaz/blueprinter",
+  "version": "0.1.0",
+  "description": "A configurable CLI for template-based files generation.",
   "main": "index.js",
   "scripts": {
     "test": "NODE_ENV=test node tests/runner"

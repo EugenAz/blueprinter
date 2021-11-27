@@ -14,7 +14,7 @@ CLI requires Node >= 6.9.0, NPM >= 3.
 
 **BEFORE YOU INSTALL:** please read the [prerequisites](#prerequisites)
 ```bash
-npm install -g blueprinter
+npm install -g @eugenaz/blueprinter
 ```
 
 ## Usage
@@ -22,3 +22,8 @@ npm install -g blueprinter
 ```bash
 bpr --help
 ```
+
+## Creating templates
+$NAME_CAPITAL_CAMEL_CASE
+$NAME_CAMEL_CASE
+$NAME

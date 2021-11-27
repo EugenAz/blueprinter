@@ -75,7 +75,7 @@ function getConfigTpl(root) {
           files: [
             {
               name: entityName => entityName + '.file1',
-              tpl: '<h1>First template generate using "tpl" config property</h1>'
+              tpl: '<h1>First template generated using "tpl" config property</h1>'
             },
             {
               name: entityName => entityName + '.file2',

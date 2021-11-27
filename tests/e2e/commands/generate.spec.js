@@ -71,7 +71,8 @@ describe('`bpr generate`', () => {
 
       const fileContent = readFileSync(join(tmpDirPath, configRoot, 'componentA.file1'), 'utf-8');
 
-      expect(fileContent).toBe('<h1>First template generate using "tpl" config property</h1>');
+      expect(fileContent.trim()).toBe('<h1>First template generated using "tpl" config property</h1>');
+      '<h1>First template generate using "tpl" config property</h1>'
     });
 
     it('should generate an empty file if neither tpl not tplName were specified in the config', () => {
@@ -103,35 +104,38 @@ describe('`bpr generate`', () => {
 
       beforeEach(() => execSync(`bpr generate some2 ${name}`));
 
-      const keywordsOptions = [
-        {
-          specTitle: 'should replace $NAME in tpl with actual name from command',
-          tplName: 'tpl2',
-          specialNameKeyword: '$NAME',
-          transformedNameValue: 'kebab-case-name'
-        }, {
-          specTitle: 'should replace $NAME_CAMEL_CASE in tpl with actual camel cased name from command',
-          tplName: 'tpl3',
-          specialNameKeyword: '$NAME_CAMEL_CASE',
-          transformedNameValue: 'kebabCaseName'
-        }, {
-          specTitle: 'should replace $NAME_CAPITAL_CAMEL_CASE in tpl with actual camel capitalized cased name from command',
-          tplName: 'tpl4',
-          specialNameKeyword: '$NAME_CAPITAL_CAMEL_CASE',
-          transformedNameValue: 'KebabCaseName'
-        }
-      ];
+      it('should replace $NAME in tpl with actual name from command', () => {
+        const contentOfTpl = readFileSync(join(tmpDirPath, templatesDirName, 'tpl2'), 'utf-8');
 
-      keywordsOptions.forEach(keywordsOption => it(keywordsOption.specTitle, () => {
-        const contentOfTpl = readFileSync(join(tmpDirPath, templatesDirName, keywordsOption.tplName), 'utf-8');
+        expect(contentOfTpl).toBe(`<h1>Entity name: $NAME</h1>`);
 
-        expect(contentOfTpl).toBe(`<h1>Entity name: ${keywordsOption.specialNameKeyword}</h1>`);
-
-        const contentOfFile = readFileSync(join(tmpDirPath, configRoot, `${name}.${keywordsOption.tplName}.file`),
+        const contentOfFile = readFileSync(join(tmpDirPath, configRoot, `${name}.tpl2.file`),
           'utf-8');
 
-        expect(contentOfFile).toBe(`<h1>Entity name: ${keywordsOption.transformedNameValue}</h1>`);
-      }));
+        expect(contentOfFile).toBe(`<h1>Entity name: kebab-case-name</h1>`);
+      });
+
+      it('should replace $NAME_CAMEL_CASE in tpl with actual camel cased name from command', () => {
+        const contentOfTpl = readFileSync(join(tmpDirPath, templatesDirName, 'tpl3'), 'utf-8');
+
+        expect(contentOfTpl).toBe(`<h1>Entity name: $NAME_CAMEL_CASE</h1>`);
+
+        const contentOfFile = readFileSync(join(tmpDirPath, configRoot, `${name}.tpl3.file`),
+          'utf-8');
+
+        expect(contentOfFile).toBe(`<h1>Entity name: kebabCaseName</h1>`);
+      });
+
+      it('should replace $NAME_CAPITAL_CAMEL_CASE in tpl with actual camel capitalized cased name from command', () => {
+        const contentOfTpl = readFileSync(join(tmpDirPath, templatesDirName, 'tpl4'), 'utf-8');
+
+        expect(contentOfTpl).toBe(`<h1>Entity name: $NAME_CAPITAL_CAMEL_CASE</h1>`);
+
+        const contentOfFile = readFileSync(join(tmpDirPath, configRoot, `${name}.tpl4.file`),
+          'utf-8');
+
+        expect(contentOfFile).toBe(`<h1>Entity name: KebabCaseName</h1>`);
+      });
     });
 
   });
