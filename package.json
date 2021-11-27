@@ -1,6 +1,6 @@
 {
   "name": "@eugenaz/blueprinter",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A configurable CLI for template-based files generation.",
   "main": "index.js",
   "scripts": {
