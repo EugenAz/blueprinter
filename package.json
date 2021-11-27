@@ -9,11 +9,11 @@
   "author": "Ievgen Aznaurov",
   "license": "ISC",
   "bin": {
-    "bpr": "./index.js"
+    "bpr": "index.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/EugenAz/blueprinter.git"
+    "url": "git+https://github.com/EugenAz/blueprinter.git"
   },
   "engines": {
     "node": ">=6.9.0",
@@ -27,5 +27,9 @@
   "devDependencies": {
     "jasmine": "^2.8.0",
     "ncp": "^2.0.0"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/EugenAz/blueprinter/issues"
+  },
+  "homepage": "https://github.com/EugenAz/blueprinter#readme"
 }
